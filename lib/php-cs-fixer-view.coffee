@@ -28,7 +28,7 @@ class PhpCsFixerView extends PhpCheckstyleBaseView
                 'level': level
             }
 
-        fixer = new commands.CommandPhpcsFixer(editor.getPath(), config)
+        fixer = new commands.PhpcsFixerCommand(editor.getPath(), config)
         command = new commands.Shell([fixer])
         self = this
         command.execute (err, stdout, stderr) ->

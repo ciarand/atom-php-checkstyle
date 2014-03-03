@@ -19,14 +19,18 @@ class Shell
         console.log "[php-checkstyle]" + overall
         exec overall, callback
 
+#
+# Base command class for others to extend
+#
+class BaseCommand
+  # Constructor
+  # @param @path   The path to the file we want to run the command on
+  # @param @config The configuration for the command
+  constructor:(@path, @config) ->
+
 
 # Phpcs command to represent phpcs
-class CommandPhpcs
-
-    # Constructor
-    # @param @path   The path to the file we want to phpcs on
-    # @param @config The configuration for the command (Such as coding standard)
-    constructor: (@path, @config) ->
+class PhpcsCommand extends BaseCommand
 
     # Getter for the command to execute
     getCommand: ->
@@ -35,7 +39,6 @@ class CommandPhpcs
         command += " -n"  if @config.warnings is false
         command += ' --report=checkstyle '
         command += @path
-        return command
 
     # Given the report, now process into workable data
     # @param err    Any errors occured via exec
@@ -51,17 +54,11 @@ class CommandPhpcs
 
 
 # Linter command
-class CommandLinter
-
-    # Constructor
-    # @param @path   The path to the file we want to phpcs on
-    # @param @config The configuration for the command (Such as coding standard)
-    constructor: (@path, @config) ->
+class LinterCommand extends BaseCommand
 
     # Getter for the command to execute
     getCommand: ->
         command = @config.executablePath + " -l -d display_errors=On " + @path
-        return command
 
     # Given the report, now process into workable data
     # @param err    Any errors occured via exec
@@ -77,17 +74,11 @@ class CommandLinter
 
 
 # Mess Detection command (utilising phpmd)
-class CommandMessDetector
-
-    # Constructor
-    # @param @path   The path to the file we want to phpmd on
-    # @param @config The configuration for the command (Such as coding standard)
-    constructor: (@path, @config) ->
+class MessDetectorCommand extends BaseCommand
 
     # Getter for the command to execute
     getCommand: ->
         command = @config.executablePath + ' ' + @path + ' text ' + @config.ruleSets
-        return command
 
     # Given the report, now process into workable data
     # @param err    Any errors occured via exec
@@ -103,12 +94,7 @@ class CommandMessDetector
 
 
 # PHP CS Fixer command
-class CommandPhpcsFixer
-
-    # Constructor
-    # @param @path   The path to the file we want to execute php-cs-fixer on
-    # @param @config The configuration for the command such as which level
-    constructor: (@path, @config) ->
+class PhpcsFixerCommand extends BaseCommand
 
     # Formulate the php-cs-fixer command
     getCommand: ->
@@ -118,7 +104,6 @@ class CommandPhpcsFixer
         command += ' --verbose'
         command += ' fix '
         command += @path
-        return command
 
     # Process the data out of php-cs-fixer
     # @param err    Any errors occured via exec
@@ -132,5 +117,4 @@ class CommandPhpcsFixer
             errorList.push item
         return errorList
 
-
-module.exports = {Shell, CommandPhpcs, CommandLinter, CommandPhpcsFixer, CommandMessDetector}
+module.exports = {Shell, PhpcsCommand, LinterCommand, PhpcsFixerCommand, MessDetectorCommand}

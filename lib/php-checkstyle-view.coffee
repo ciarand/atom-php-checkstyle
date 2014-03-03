@@ -20,15 +20,15 @@ class PhpCheckstyleView extends PhpCheckstyleBaseView
             console.warn "Cannot run for non php files"
             return
 
-        linter = new commands.CommandLinter(editor.getPath(), {
+        linter = new commands.LinterCommand(editor.getPath(), {
             'executablePath': atom.config.get "php-checkstyle.phpPath"
         })
-        phpcs = new commands.CommandPhpcs(editor.getPath(), {
+        phpcs = new commands.PhpcsCommand(editor.getPath(), {
             'executablePath': atom.config.get("php-checkstyle.phpcsExecutablePath"),
             'standard': atom.config.get("php-checkstyle.phpcsStandard"),
             'warnings': atom.config.get("php-checkstyle.phpcsDisplayWarnings")
         })
-        messDetector= new commands.CommandMessDetector(editor.getPath(), {
+        messDetector= new commands.MessDetectorCommand(editor.getPath(), {
             'executablePath': atom.config.get("php-checkstyle.phpmdExecutablePath"),
             'ruleSets': atom.config.get("php-checkstyle.phpmdRuleSets")
         })
